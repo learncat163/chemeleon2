@@ -11,6 +11,7 @@
 import sys
 import os
 import json
+import random
 from pathlib import Path
 from datetime import datetime
 
@@ -141,10 +142,15 @@ def test_single_module(module_name, vae_path, ldm_path, structure_path, device="
 
 
 def set_seed(seed=42):
-    """固定随机种子"""
+    """固定随机种子，确保完全可复现"""
+    random.seed(seed)
+    np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+        # 设置CUDA确定性模式
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
 
 def import_datetime():
